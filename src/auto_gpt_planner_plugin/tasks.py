@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Boolean
 
 Base = declarative_base()
 
@@ -20,14 +21,14 @@ class TaskManager:
     allowing for tasks to be created, updated, and retrieved.
     """
 
-    def __init__(self, db_path):
+    def __init__(self, engine):
         """
         Initialize a new TaskManager instance.
 
         Args:
-            db_path (str): The path to the SQLite database file.
+            engine: The SQLAlchemy engine object.
         """
-        self.engine = create_engine('sqlite:///' + db_path)
+        self.engine = engine
         Base.metadata.create_all(self.engine)
         self.Session = scoped_session(sessionmaker(bind=self.engine))
 

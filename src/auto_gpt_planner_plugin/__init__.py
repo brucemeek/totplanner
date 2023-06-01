@@ -1,8 +1,10 @@
+from sqlalchemy import create_engine
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
 from .planner import Planner
 from .database import DatabaseManager
 from .models import Task, Plan
 from .tasks import TaskManager
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, TypedDict
 
 PromptGenerator = TypeVar("PromptGenerator")
 
@@ -11,7 +13,8 @@ class Message(TypedDict):
     role: str
     content: str
 
-class AutoGPTPlannerPlugin:
+
+class AutoGPTPlannerPlugin(AutoGPTPluginTemplate):
     """
     This is the main class for the AutoGPT Planner Plugin. It integrates all the components of the plugin and provides
     the main interface for interacting with the plugin.
@@ -26,13 +29,18 @@ class AutoGPTPlannerPlugin:
         self._description = "This is a task planner plugin for Auto-GPT. It manages tasks and plans for the user."
 
         # Initialize the database manager
-        self.database_manager = DatabaseManager()
+        database_name = "autogpt_database"  # Replace "your_database_name" with your desired database name
+        self.database_manager = DatabaseManager(database_name)
 
-        # Initialize the task manager with the database manager
-        self.task_manager = TaskManager(self.database_manager)
+        # Create the SQLAlchemy engine
+        db_path = f"sqlite:///autogpt_database.db"  # Replace "autogpt_database" with your desired database name
+        engine = create_engine(db_path)
+
+        # Initialize the task manager with the engine
+        self.task_manager = TaskManager(engine)
 
         # Initialize the planner with the task manager
-        self.planner = Planner(self.task_manager)
+        self.planner = Planner()
 
     def start_planning_cycle(self):
         """
@@ -134,3 +142,88 @@ class AutoGPTPlannerPlugin:
         except Exception as e:
             raise Exception("Failed to get task: " + str(e))
 
+    def can_handle_on_response(self) -> bool:
+        return False
+
+    def on_response(self, response: str, *args, **kwargs) -> str:
+        pass
+
+    def can_handle_post_prompt(self) -> bool:
+        return False
+
+    def post_prompt(self, prompt: PromptGenerator) -> PromptGenerator:
+        pass
+
+    def can_handle_on_planning(self) -> bool:
+        return False
+
+    def on_planning(self, prompt: PromptGenerator, messages: List[Message]) -> Optional[str]:
+        pass
+
+    def can_handle_post_planning(self) -> bool:
+        return False
+
+    def post_planning(self, response: str) -> str:
+        pass
+
+    def can_handle_pre_instruction(self) -> bool:
+        return False
+
+    def pre_instruction(self, messages: List[Message]) -> List[Message]:
+        pass
+
+    def can_handle_on_instruction(self) -> bool:
+        return False
+
+    def on_instruction(self, messages: List[Message]) -> Optional[str]:
+        pass
+
+    def can_handle_post_instruction(self) -> bool:
+        return False
+
+    def post_instruction(self, response: str) -> str:
+        pass
+
+    def can_handle_pre_command(self) -> bool:
+        return False
+
+    def pre_command(self, command_name: str, arguments: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+        pass
+
+    def can_handle_post_command(self) -> bool:
+        return False
+
+    def post_command(self, command_name: str, response: str) -> str:
+        pass
+
+    def can_handle_chat_completion(
+        self, messages: Dict[Any, Any], model: str, temperature: float, max_tokens: int
+    ) -> bool:
+        return False
+
+    def handle_chat_completion(
+        self, messages: List[Message], model: str, temperature: float, max_tokens: int
+    ) -> str:
+        pass
+
+    def can_handle_text_embedding(
+        self, text: str
+    ) -> bool:
+        return False
+
+    def handle_text_embedding(
+        self, text: str
+    ) -> list:
+        pass
+
+    def can_handle_user_input(self, user_input: str) -> bool:
+        return False
+
+    def user_input(self, user_input: str) -> str:
+        pass
+
+    def can_handle_report(self) -> bool:
+        return False
+
+    def report(self, message: str) -> None:
+        pass
