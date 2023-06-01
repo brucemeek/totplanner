@@ -9,9 +9,5 @@ build
 twine
 auto_gpt_plugin_template
 openai
-tokenizers
-numpy
-task
-backoff
-python-dotenv
-sqlalchemy
+auto_gpt_plugin_template==0.1.0
+sqlalchemy==1.4.22

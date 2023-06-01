@@ -96,6 +96,8 @@ class Utils:
         if task:
             task.completed = completed
             session.commit()
+        else:
+            raise Exception(f"Task with id {task_id} not found in the database.")
 
     @staticmethod
     def update_plan(session, plan_id, completed):
@@ -114,3 +116,6 @@ class Utils:
         if plan:
             plan.completed = completed
             session.commit()
+        else:
+            raise Exception(f"Plan with id {plan_id} not found in the database.")
+
