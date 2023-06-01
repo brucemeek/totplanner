@@ -31,9 +31,12 @@ class DatabaseManager:
         Args:
             db_name (str): The name of the SQLite database file.
         """
-        self.engine = create_engine('sqlite:///' + db_name)
-        Base.metadata.create_all(self.engine)
-        self.Session = scoped_session(sessionmaker(bind=self.engine))
+        try:
+            self.engine = create_engine('sqlite:///' + db_name)
+            Base.metadata.create_all(self.engine)
+            self.Session = scoped_session(sessionmaker(bind=self.engine))
+        except Exception as e:
+            raise Exception("Failed to initialize DatabaseManager: " + str(e))
 
     def create_task(self, task):
         """
@@ -41,9 +44,12 @@ class DatabaseManager:
         Args:
             task (Task): The task to be added to the database.
         """
-        session = self.Session()
-        session.add(task)
-        session.commit()
+        try:
+            session = self.Session()
+            session.add(task)
+            session.commit()
+        except Exception as e:
+            raise Exception("Failed to create task: " + str(e))
 
     def get_task(self, task_id):
         """
@@ -53,9 +59,12 @@ class DatabaseManager:
         Returns:
             Task: The retrieved task.
         """
-        session = self.Session()
-        task = session.query(Task).filter_by(id=task_id).first()
-        return task
+        try:
+            session = self.Session()
+            task = session.query(Task).filter_by(id=task_id).first()
+            return task
+        except Exception as e:
+            raise Exception("Failed to get task: " + str(e))
 
     def update_task(self, task):
         """
@@ -63,9 +72,12 @@ class DatabaseManager:
         Args:
             task (Task): The task to be updated in the database.
         """
-        session = self.Session()
-        session.merge(task)
-        session.commit()
+        try:
+            session = self.Session()
+            session.merge(task)
+            session.commit()
+        except Exception as e:
+            raise Exception("Failed to update task: " + str(e))
 
     def delete_task(self, task_id):
         """
@@ -73,10 +85,13 @@ class DatabaseManager:
         Args:
             task_id (int): The ID of the task to be deleted.
         """
-        session = self.Session()
-        task = session.query(Task).filter_by(id=task_id).first()
-        session.delete(task)
-        session.commit()
+        try:
+            session = self.Session()
+            task = session.query(Task).filter_by(id=task_id).first()
+            session.delete(task)
+            session.commit()
+        except Exception as e:
+            raise Exception("Failed to delete task: " + str(e))
 
     def create_plan(self, plan):
         """
@@ -84,9 +99,12 @@ class DatabaseManager:
         Args:
             plan (Plan): The plan to be added to the database.
         """
-        session = self.Session()
-        session.add(plan)
-        session.commit()
+        try:
+            session = self.Session()
+            session.add(plan)
+            session.commit()
+        except Exception as e:
+            raise Exception("Failed to create plan: " + str(e))
 
     def get_plan(self, plan_id):
         """
@@ -96,9 +114,12 @@ class DatabaseManager:
         Returns:
             Plan: The retrieved plan.
         """
-        session = self.Session()
-        plan = session.query(Plan).filter_by(id=plan_id).first()
-        return plan
+        try:
+            session = self.Session()
+            plan = session.query(Plan).filter_by(id=plan_id).first()
+            return plan
+        except Exception as e:
+            raise Exception("Failed to get plan: " + str(e))
 
     def update_plan(self, plan):
         """
@@ -106,9 +127,12 @@ class DatabaseManager:
         Args:
             plan (Plan): The plan to be updated in the database.
         """
-        session = self.Session()
-        session.merge(plan)
-        session.commit()
+        try:
+            session = self.Session()
+            session.merge(plan)
+            session.commit()
+        except Exception as e:
+            raise Exception("Failed to update plan: " + str(e))
 
     def delete_plan(self, plan_id):
         """
@@ -117,11 +141,14 @@ class DatabaseManager:
         Args:
             plan_id (int): The ID of the plan to be deleted.
         """
-        session = self.Session()
-        plan = session.query(Plan).filter_by(id=plan_id).first()
-        if plan:
-            session.delete(plan)
-            session.commit()
+        try:
+            session = self.Session()
+            plan = session.query(Plan).filter_by(id=plan_id).first()
+            if plan:
+                session.delete(plan)
+                session.commit()
+        except Exception as e:
+            raise Exception("Failed to delete plan: " + str(e))
 
     def mark_task_complete(self, task_id):
         """
@@ -130,11 +157,14 @@ class DatabaseManager:
         Args:
             task_id (int): The ID of the task to be marked as complete.
         """
-        session = self.Session()
-        task = session.query(Task).filter_by(id=task_id).first()
-        if task:
-            task.completed = True
-            session.commit()
+        try:
+            session = self.Session()
+            task = session.query(Task).filter_by(id=task_id).first()
+            if task:
+                task.completed = True
+                session.commit()
+        except Exception as e:
+            raise Exception("Failed to mark task complete: " + str(e))
 
     def mark_goal_complete(self, goal):
         """
@@ -143,16 +173,29 @@ class DatabaseManager:
         Args:
             goal (str): The goal to be marked as complete.
         """
-        session = self.Session()
-        plan = session.query(Plan).filter_by(goal=goal).first()
-        if plan:
-            plan.completed = True
-            session.commit()
+        try:
+            session = self.Session()
+            plan = session.query(Plan).filter_by(goal=goal).first()
+            if plan:
+                plan.completed = True
+                session.commit()
+        except Exception as e:
+            raise Exception("Failed to mark goal complete: " + str(e))
 
     def update_goals(self):
         """
         Updates the goals to complete the overall goal. This could involve changing the status of the goal, adding new tasks, or other updates as needed.
         """
-        # Implementation goes here
-        pass
-
+        try:
+            session = self.Session()
+            # Retrieve all goals
+            goals = session.query(Goal).all()
+            for goal in goals:
+                # Check if all tasks for this goal are completed
+                tasks = session.query(Task).filter_by(goal_id=goal.id).all()
+                if all(task.completed for task in tasks):
+                    # If all tasks are completed, mark the goal as completed
+                    goal.status = 'completed'
+            session.commit()
+        except Exception as e:
+            raise Exception("Failed to update goals: " + str(e))

@@ -10,52 +10,100 @@ def main():
 
     # Create a new database
     db_name = "autogpt_planner"
-    engine = Utils.create_database(db_name)
+    try:
+        engine = Utils.create_database(db_name)
+    except Exception as e:
+        raise Exception("Failed to create database: " + str(e))
 
     # Create a new Session
-    session = Utils.create_session(engine)
+    try:
+        session = Utils.create_session(engine)
+    except Exception as e:
+        raise Exception("Failed to create session: " + str(e))
 
     # Create a new DatabaseManager
-    db_manager = DatabaseManager(session)
+    try:
+        db_manager = DatabaseManager(session)
+    except Exception as e:
+        raise Exception("Failed to create DatabaseManager: " + str(e))
 
     # Create a new Planner
-    planner = Planner(db_manager)
+    try:
+        planner = Planner(db_manager)
+    except Exception as e:
+        raise Exception("Failed to create Planner: " + str(e))
 
     # Create a new TaskManager
-    task_manager = TaskManager(db_manager)
+    try:
+        task_manager = TaskManager(db_manager)
+    except Exception as e:
+        raise Exception("Failed to create TaskManager: " + str(e))
 
     # Start up and run the initial planning cycle
-    planner.initial_planning_cycle()
+    try:
+        planner.initial_planning_cycle()
+    except Exception as e:
+        raise Exception("Failed to run initial planning cycle: " + str(e))
 
     # Generate a new plan SQL database to use for future use
-    db_manager.generate_plan_database()
+    try:
+        db_manager.generate_plan_database()
+    except Exception as e:
+        raise Exception("Failed to generate plan database: " + str(e))
 
     # Generate task SQL database that contains all task available to the plugin
-    db_manager.generate_task_database()
+    try:
+        db_manager.generate_task_database()
+    except Exception as e:
+        raise Exception("Failed to generate task database: " + str(e))
 
     # Generate a new plan based on the goals given to AutoGPT
-    planner.generate_plan()
+    try:
+        planner.generate_plan()
+    except Exception as e:
+        raise Exception("Failed to generate plan: " + str(e))
 
     # Generate unique task based on the new plan
-    task_manager.generate_tasks()
+    try:
+        task_manager.generate_tasks()
+    except Exception as e:
+        raise Exception("Failed to generate tasks: " + str(e))
 
     # Solve the first task with the highest priority using the solve method
-    task_manager.solve_highest_priority_task()
+    try:
+        task_manager.solve_highest_priority_task()
+    except Exception as e:
+        raise Exception("Failed to solve highest priority task: " + str(e))
 
     # Mark the task complete
-    task_manager.mark_task_complete()
+    try:
+        task_manager.mark_task_complete()
+    except Exception as e:
+        raise Exception("Failed to mark task complete: " + str(e))
 
     # Update the unique task SQL database
-    db_manager.update_task_database()
+    try:
+        db_manager.update_task_database()
+    except Exception as e:
+        raise Exception("Failed to update task database: " + str(e))
 
     # Complete tasks until done with a single goal
-    task_manager.complete_tasks()
+    try:
+        task_manager.complete_tasks()
+    except Exception as e:
+        raise Exception("Failed to complete tasks: " + str(e))
 
     # Once all tasks are complete, it marks the goal done
-    planner.mark_goal_done()
+    try:
+        planner.mark_goal_done()
+    except Exception as e:
+        raise Exception("Failed to mark goal done: " + str(e))
 
     # Once a goal is done, it updates the goals to complete the overall goal
-    planner.update_goals()
+    try:
+        planner.update_goals()
+    except Exception as e:
+        raise Exception("Failed to update goals: " + str(e))
 
 if __name__ == "__main__":
     main()

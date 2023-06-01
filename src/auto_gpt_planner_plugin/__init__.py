@@ -33,19 +33,28 @@ class AutoGPTPlannerPlugin:
         Starts the planning cycle. This includes generating a new plan, creating tasks based on the plan,
         and executing tasks based on their priority.
         """
-        self.planner.start_planning_cycle()
+        try:
+            self.planner.start_planning_cycle()
+        except Exception as e:
+            raise Exception("Failed to start planning cycle: " + str(e))
 
     def generate_plan(self):
         """
         Generates a new plan and saves it to the database.
         """
-        self.planner.generate_plan()
+        try:
+            self.planner.generate_plan()
+        except Exception as e:
+            raise Exception("Failed to generate plan: " + str(e))
 
     def generate_tasks(self):
         """
         Generates tasks based on the current plan and saves them to the database.
         """
-        self.planner.generate_tasks()
+        try:
+            self.planner.generate_tasks()
+        except Exception as e:
+            raise Exception("Failed to generate tasks: " + str(e))
 
     def execute_task(self, task_id):
         """
@@ -54,7 +63,10 @@ class AutoGPTPlannerPlugin:
         Args:
             task_id (int): The ID of the task to execute.
         """
-        self.task_manager.execute_task(task_id)
+        try:
+            self.task_manager.execute_task(task_id)
+        except Exception as e:
+            raise Exception("Failed to execute task: " + str(e))
 
     def mark_task_complete(self, task_id):
         """
@@ -63,13 +75,19 @@ class AutoGPTPlannerPlugin:
         Args:
             task_id (int): The ID of the task to mark as complete.
         """
-        self.task_manager.mark_task_complete(task_id)
+        try:
+            self.task_manager.mark_task_complete(task_id)
+        except Exception as e:
+            raise Exception("Failed to mark task as complete: " + str(e))
 
     def update_plan(self):
         """
         Updates the current plan based on the completed tasks.
         """
-        self.planner.update_plan()
+        try:
+            self.planner.update_plan()
+        except Exception as e:
+            raise Exception("Failed to update plan: " + str(e))
 
     def get_plan(self):
         """
@@ -78,7 +96,10 @@ class AutoGPTPlannerPlugin:
         Returns:
             Plan: The current plan.
         """
-        return self.planner.get_plan()
+        try:
+            return self.planner.get_plan()
+        except Exception as e:
+            raise Exception("Failed to get plan: " + str(e))
 
     def get_tasks(self):
         """
@@ -87,7 +108,10 @@ class AutoGPTPlannerPlugin:
         Returns:
             List[Task]: A list of all tasks.
         """
-        return self.task_manager.get_tasks()
+        try:
+            return self.task_manager.get_tasks()
+        except Exception as e:
+            raise Exception("Failed to get tasks: " + str(e))
 
     def get_task(self, task_id):
         """
@@ -99,4 +123,8 @@ class AutoGPTPlannerPlugin:
         Returns:
             Task: The task with the given ID.
         """
-        return self.task_manager.get_task(task_id)
+        try:
+            return self.task_manager.get_task(task_id)
+        except Exception as e:
+            raise Exception("Failed to get task: " + str(e))
+
