@@ -143,55 +143,55 @@ class AutoGPTPlannerPlugin(AutoGPTPluginTemplate):
             raise Exception("Failed to get task: " + str(e))
 
     def can_handle_on_response(self) -> bool:
-        return False
+        return True
 
     def on_response(self, response: str, *args, **kwargs) -> str:
         pass
 
     def can_handle_post_prompt(self) -> bool:
-        return False
+        return True
 
     def post_prompt(self, prompt: PromptGenerator) -> PromptGenerator:
         pass
 
     def can_handle_on_planning(self) -> bool:
-        return False
+        return True
 
     def on_planning(self, prompt: PromptGenerator, messages: List[Message]) -> Optional[str]:
         pass
 
     def can_handle_post_planning(self) -> bool:
-        return False
+        return True
 
     def post_planning(self, response: str) -> str:
         pass
 
     def can_handle_pre_instruction(self) -> bool:
-        return False
+        return True
 
     def pre_instruction(self, messages: List[Message]) -> List[Message]:
         pass
 
     def can_handle_on_instruction(self) -> bool:
-        return False
+        return True
 
     def on_instruction(self, messages: List[Message]) -> Optional[str]:
         pass
 
     def can_handle_post_instruction(self) -> bool:
-        return False
+        return True
 
     def post_instruction(self, response: str) -> str:
         pass
 
     def can_handle_pre_command(self) -> bool:
-        return False
+        return True
 
     def pre_command(self, command_name: str, arguments: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
         pass
 
     def can_handle_post_command(self) -> bool:
-        return False
+        return True
 
     def post_command(self, command_name: str, response: str) -> str:
         pass
@@ -199,7 +199,7 @@ class AutoGPTPlannerPlugin(AutoGPTPluginTemplate):
     def can_handle_chat_completion(
         self, messages: Dict[Any, Any], model: str, temperature: float, max_tokens: int
     ) -> bool:
-        return False
+        return True
 
     def handle_chat_completion(
         self, messages: List[Message], model: str, temperature: float, max_tokens: int
@@ -209,7 +209,7 @@ class AutoGPTPlannerPlugin(AutoGPTPluginTemplate):
     def can_handle_text_embedding(
         self, text: str
     ) -> bool:
-        return False
+        return True
 
     def handle_text_embedding(
         self, text: str
@@ -217,13 +217,13 @@ class AutoGPTPlannerPlugin(AutoGPTPluginTemplate):
         pass
 
     def can_handle_user_input(self, user_input: str) -> bool:
-        return False
+        return True
 
     def user_input(self, user_input: str) -> str:
         pass
 
     def can_handle_report(self) -> bool:
-        return False
+        return True
 
     def report(self, message: str) -> None:
         pass
