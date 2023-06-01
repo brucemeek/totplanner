@@ -1,10 +1,18 @@
+from typing import Any, Dict, List, Optional, Tuple, TypedDict, TypeVar
+from auto_gpt_plugin_template import AutoGPTPluginTemplate
 from auto_gpt_plugin_template import AutoGPTPluginTemplate
 from .planner import Planner
 from .database import DatabaseManager
 from .models import Task, Plan
 from .tasks import TaskManager
-from .utils import load_config, save_config
 
+PromptGenerator = TypeVar("PromptGenerator")
+
+
+class Message(TypedDict):
+    role: str
+    content: str
+    
 class AutoGPTPlannerPlugin:
     """
     This is the main class for the AutoGPT Planner Plugin. It integrates all the components of the plugin and provides

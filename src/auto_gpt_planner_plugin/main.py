@@ -1,7 +1,7 @@
-from database import DatabaseManager
-from planner import Planner
-from tasks import TaskManager
-from utils import Utils
+from .database import DatabaseManager
+from .planner import Planner
+from .tasks import TaskManager
+from .utils import Utils
 
 def main():
     """

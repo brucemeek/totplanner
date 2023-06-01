@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Enum, ForeignKey
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-from database import Plan, Task
+from .database import Plan, Task
 
 import tasks
 

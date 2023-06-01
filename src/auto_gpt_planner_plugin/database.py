@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, String, Boolean
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.ext.declarative import declarative_base
-import uuid
 
 Base = declarative_base()
 
@@ -188,14 +187,14 @@ class DatabaseManager:
         """
         try:
             session = self.Session()
-            # Retrieve all goals
-            goals = session.query(Goal).all()
-            for goal in goals:
-                # Check if all tasks for this goal are completed
-                tasks = session.query(Task).filter_by(goal_id=goal.id).all()
+            # Retrieve all plans
+            plans = session.query(Plan).all()
+            for plan in plans:
+                # Check if all tasks for this plan are completed
+                tasks = session.query(Task).filter_by(plan_id=plan.id).all()
                 if all(task.completed for task in tasks):
-                    # If all tasks are completed, mark the goal as completed
-                    goal.status = 'completed'
+                    # If all tasks are completed, mark the plan as completed
+                    plan.completed = True
             session.commit()
         except Exception as e:
             raise Exception("Failed to update goals: " + str(e))

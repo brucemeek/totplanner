@@ -20,6 +20,8 @@ class Task(Base):
     assignee = Column(String) # Person assigned to the task
     dependencies = Column(String) # Dependencies of the task
     completed = Column(Boolean, default=False) # Whether the task has been completed
+    plan_id = Column(Integer, ForeignKey('plans.id')) # Foreign key to the Plan table
+    plan = relationship("Plan", back_populates="tasks") # Relationship to the Plan table
 
 class Plan(Base):
     """
@@ -30,6 +32,7 @@ class Plan(Base):
     id = Column(Integer, primary_key=True) # Unique identifier for each plan
     goal = Column(String) # Goal of the plan
     completed = Column(Boolean, default=False) # Whether the plan has been completed
+    tasks = relationship("Task", back_populates="plan") # Relationship to the Task table
 
 # Generate a unique identifier
 uuid_str = str(uuid.uuid4())
