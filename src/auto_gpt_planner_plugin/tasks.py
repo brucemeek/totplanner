@@ -8,7 +8,6 @@ Base = declarative_base()
 class Task(Base):
     """Task model class."""
     __tablename__ = 'tasks'
-
     id = Column(Integer, primary_key=True)
     description = Column(String)
     priority = Column(Integer)
@@ -19,7 +18,6 @@ class TaskManager:
     def __init__(self, engine):
         """
         Initialize a new TaskManager instance.
-
         Args:
             engine: The SQLAlchemy engine object.
         """
@@ -30,10 +28,8 @@ class TaskManager:
     def create_task(self, task):
         """
         Create a new task in the database.
-
         Args:
             task (Task): The task to be added to the database.
-
         Raises:
             Exception: If the task creation fails.
         """
@@ -48,13 +44,10 @@ class TaskManager:
     def get_task(self, task_id):
         """
         Retrieve a task from the database.
-
         Args:
             task_id (int): The ID of the task to be retrieved.
-
         Returns:
             Task: The retrieved task.
-
         Raises:
             Exception: If the task with the given ID does not exist.
         """
@@ -67,10 +60,8 @@ class TaskManager:
     def update_task(self, task):
         """
         Update a task in the database.
-
         Args:
             task (Task): The task to be updated in the database.
-
         Raises:
             Exception: If the task update fails.
         """
@@ -85,10 +76,8 @@ class TaskManager:
     def delete_task(self, task_id):
         """
         Delete a task from the database.
-
         Args:
             task_id (int): The ID of the task to be deleted.
-
         Raises:
             Exception: If the task with the given ID does not exist or the deletion fails.
         """
@@ -106,10 +95,8 @@ class TaskManager:
     def get_all_tasks(self):
         """
         Retrieve all tasks from the database.
-
         Returns:
             List[Task]: The list of all tasks.
-
         Raises:
             Exception: If the task retrieval fails.
         """
