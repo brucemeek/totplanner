@@ -5,8 +5,8 @@ from sqlalchemy import Column, Integer, String, Boolean
 
 Base = declarative_base()
 
-# Define the Task model
 class Task(Base):
+    """Task model class."""
     __tablename__ = 'tasks'
 
     id = Column(Integer, primary_key=True)
@@ -14,13 +14,8 @@ class Task(Base):
     priority = Column(Integer)
     completed = Column(Boolean)
 
-# TaskManager class
 class TaskManager:
-    """
-    The TaskManager class is responsible for managing tasks. It interacts with the tasks database,
-    allowing for tasks to be created, updated, and retrieved.
-    """
-
+    """TaskManager class for managing tasks."""
     def __init__(self, engine):
         """
         Initialize a new TaskManager instance.
@@ -38,6 +33,9 @@ class TaskManager:
 
         Args:
             task (Task): The task to be added to the database.
+
+        Raises:
+            Exception: If the task creation fails.
         """
         session = self.Session()
         try:
@@ -56,6 +54,9 @@ class TaskManager:
 
         Returns:
             Task: The retrieved task.
+
+        Raises:
+            Exception: If the task with the given ID does not exist.
         """
         session = self.Session()
         task = session.query(Task).filter_by(id=task_id).first()
@@ -69,6 +70,9 @@ class TaskManager:
 
         Args:
             task (Task): The task to be updated in the database.
+
+        Raises:
+            Exception: If the task update fails.
         """
         session = self.Session()
         try:
@@ -84,6 +88,9 @@ class TaskManager:
 
         Args:
             task_id (int): The ID of the task to be deleted.
+
+        Raises:
+            Exception: If the task with the given ID does not exist or the deletion fails.
         """
         session = self.Session()
         task = session.query(Task).filter_by(id=task_id).first()
@@ -102,6 +109,9 @@ class TaskManager:
 
         Returns:
             List[Task]: The list of all tasks.
+
+        Raises:
+            Exception: If the task retrieval fails.
         """
         session = self.Session()
         tasks = session.query(Task).all()
@@ -115,6 +125,9 @@ class TaskManager:
 
         Returns:
             List[Task]: The list of all incomplete tasks.
+
+        Raises:
+            Exception: If the task retrieval fails.
         """
         session = self.Session()
         tasks = session.query(Task).filter_by(completed=False).all()
@@ -128,6 +141,9 @@ class TaskManager:
 
         Args:
             task_id (int): The ID of the task to be marked as complete.
+
+        Raises:
+            Exception: If the task with the given ID does not exist or the update fails.
         """
         session = self.Session()
         task = session.query(Task).filter_by(id=task_id).first()
@@ -146,6 +162,9 @@ class TaskManager:
 
         Returns:
             Task: The highest priority task.
+
+        Raises:
+            Exception: If no incomplete tasks are found.
         """
         session = self.Session()
         task = session.query(Task).filter_by(completed=False).order_by(Task.priority.desc()).first()
@@ -159,6 +178,9 @@ class TaskManager:
 
         Args:
             goal_id (int): The ID of the goal.
+
+        Raises:
+            Exception: If no tasks are found for the goal or the update fails.
         """
         session = self.Session()
         tasks = session.query(Task).filter_by(goal_id=goal_id).all()
@@ -178,7 +200,8 @@ class TaskManager:
 
         Args:
             overall_goal_id (int): The ID of the overall goal.
+
+        Note: This method will depend on how your goals are structured in your database.
+        You'll need to implement this method based on your specific requirements.
         """
-        # This method will depend on how your goals are structured in your database.
-        # You'll need to implement this method based on your specific requirements.
         pass

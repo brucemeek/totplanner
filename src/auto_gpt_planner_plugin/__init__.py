@@ -60,13 +60,66 @@ class AutoGPTPlannerPlugin(AutoGPTPluginTemplate):
         return True
 
     def post_prompt(self, prompt: PromptGenerator) -> PromptGenerator:
-        """This method is called just after the generate_prompt is called,
-            but actually before the prompt is generated.
+        """
+        This method is called after the prompt has been generated but before it is sent to the model.
+        It is used to perform actions related to task planning and management.
+
+        The method performs the following steps:
+
+        1. Starts the planning cycle by calling the `start_planning_cycle` method of the `Planner` class.
+        This involves generating a new plan and task database, creating tasks based on the plan, and starting the execution of tasks.
+
+        2. Generates a new plan by calling the `generate_plan` method of the `Planner` class. The plan is saved to the database.
+
+        3. Generates tasks based on the current plan by calling the `generate_tasks` method of the `Planner` class. The tasks are saved to the database.
+
+        4. Retrieves all tasks from the database by calling the `get_all_tasks` method of the `DatabaseManager` class.
+
+        5. Iterates over the retrieved tasks. For each task, it performs the following actions:
+        - Retrieves the task ID.
+        - Executes the task by calling the `execute_task` method of the `TaskManager` class, passing the task ID as an argument.
+        - Marks the task as complete by calling the `mark_task_complete` method of the `TaskManager` class, passing the task ID as an argument.
+        - Retrieves the task based on its ID by calling the `get_task` method of the `TaskManager` class, passing the task ID as an argument.
+
+        6. Updates the current plan based on the completed tasks by calling the `update_plan` method of the `Planner` class.
+
+        7. Retrieves the current plan from the database by calling the `get_plan` method of the `Planner` class.
+
+        8. Retrieves all tasks from the database by calling the `get_tasks` method of the `TaskManager` class.
+
+        If any of the steps fail, an exception is raised and its message is printed to the console.
+
         Args:
             prompt (PromptGenerator): The prompt generator.
+
         Returns:
             PromptGenerator: The prompt generator.
         """
+        # Call the methods here
+        try:
+            self.start_planning_cycle()
+            self.generate_plan()
+            self.generate_tasks()  # Generate the tasks and store them in the database
+
+            # Retrieve all tasks from the database
+            tasks = self.database_manager.get_all_tasks()
+
+            # Iterate over the tasks and use the task IDs
+            for task in tasks:
+                task_id = task.id  # Get the task ID
+                self.execute_task(task_id)
+                self.mark_task_complete(task_id)
+                self.get_task(task_id)
+
+            self.update_plan()
+            self.get_plan()
+            self.get_tasks()
+
+        except Exception as e:
+            print(str(e))
+
+        # Return the prompt
+        return prompt
 
     def can_handle_on_planning(self) -> bool:
         """This method is called to check that the plugin can

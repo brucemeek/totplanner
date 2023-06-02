@@ -1,24 +1,41 @@
-from .database import DatabaseManager
-from .tasks import TaskManager
 import os
 import openai
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, Boolean
+
+
+from .tasks import TaskManager
+from .database import DatabaseManager
+
+Base = declarative_base()
 
 class Planner:
+    """
+    The Planner class is responsible for managing the planning process. It interacts with the tasks and plan databases,
+    allowing for tasks and plans to be created, updated, and retrieved.
+    """
+
     def __init__(self, engine, task_manager=None):
         """
-        Initializes the Planner class and creates new instances of the TaskManager and DatabaseManager.
+        Initialize a new Planner instance.
 
         Args:
-            engine: The SQLAlchemy engine.
-            task_manager (TaskManager): An instance of the TaskManager class.
+            engine: The SQLAlchemy engine object.
+            task_manager: An optional TaskManager instance. If not provided, a new one will be created.
         """
-        self.task_manager = task_manager if task_manager is not None else TaskManager(engine)
+        self.engine = engine
+        Base.metadata.create_all(self.engine)
+        self.Session = scoped_session(sessionmaker(bind=self.engine))
+        self.task_manager = task_manager or TaskManager(engine)
         self.database_manager = DatabaseManager(engine)
 
 
     def run_initial_planning_cycle(self):
         """
-        Runs the initial planning cycle. This involves generating a new plan and task database, creating tasks based on the plan, and starting the execution of tasks.
+        Run the initial planning cycle. This involves generating a new plan and task database, creating tasks based on the plan,
+        and starting the execution of tasks.
         """
         # Generate plan and task databases
         if not self.generate_plan_database():
@@ -52,7 +69,7 @@ class Planner:
 
     def generate_task_database(self):
         """
-        Generates a new task database that contains all tasks available to the plugin. This database will not be overwritten.
+        Generate a new task database that contains all tasks available to the plugin. This database will not be overwritten.
         """
         result = self.database_manager.create_task_database()
         if result is None:
@@ -61,13 +78,13 @@ class Planner:
 
     def construct_plan_prompt(self, goals):
         """
-        Constructs the plan prompt based on the given goals.
+        Construct the plan prompt based on the given goals.
 
         Args:
-            goals (list): The list of goals.
+            goals: The goals to be achieved.
 
         Returns:
-            str: The formatted plan prompt.
+            str: The constructed plan prompt.
         """
         if not isinstance(goals, list):
             raise TypeError("Goals must be a list")
@@ -95,13 +112,13 @@ class Planner:
 
     def generate_plan(self, goals):
         """
-        Generates a new plan based on the given goals. Includes generating an improved plan using ChatCompletion.
+        Generate a new plan based on the given goals. Includes generating an improved plan using ChatCompletion.
 
         Args:
-            goals (list): The goals to generate the plan.
+            goals: The goals to be achieved.
 
         Returns:
-            str: The generated plan.
+            Plan: The generated plan.
         """
         if not isinstance(goals, list):
             raise TypeError("Goals must be a list")
@@ -158,7 +175,10 @@ class Planner:
 
     def solve_task(self, task):
         """
-        Solves the task with the highest priority using the solve method.
+        Solve the task with the highest priority using the solve method.
+
+        Args:
+            task (Task): The task to be solved.
         """
         if not isinstance(task, dict):
             raise TypeError("Task must be a dictionary")
@@ -169,7 +189,10 @@ class Planner:
 
     def mark_task_complete(self, task):
         """
-        Marks the given task as complete.
+        Mark the given task as complete.
+
+        Args:
+            task (Task): The task to be marked as complete.
         """
         if not isinstance(task, dict):
             raise TypeError("Task must be a dictionary")
@@ -189,7 +212,10 @@ class Planner:
 
     def complete_tasks_for_goal(self, goal):
         """
-        Completes all tasks for a single goal.
+        Complete all tasks associated with a single goal.
+
+        Args:
+            goal (Goal): The goal to complete tasks for.
         """
         if not isinstance(goal, str):
             raise TypeError("Goal must be a string")
@@ -200,10 +226,12 @@ class Planner:
             if not self.mark_task_complete(task):
                 raise Exception(f"Failed to mark task {task['id']} as complete")
 
-
     def mark_goal_complete(self, goal):
         """
-        Marks the given goal as complete.
+        Mark the given goal as complete.
+
+        Args:
+            goal (Goal): The goal to be marked as complete.
         """
         if not isinstance(goal, str):
             raise TypeError("Goal must be a string")
@@ -242,7 +270,7 @@ class Planner:
 
     def generate_tasks(self):
         """
-        Generates tasks based on the current plan and saves them to the database.
+        Generate tasks based on the current plan and save them to the database.
         """
         try:
             self.planner.generate_tasks()
@@ -308,13 +336,13 @@ class Planner:
 
     def get_task(self, task_id):
         """
-        Retrieves a task based on its ID.
+        Retrieve a task based on its ID.
 
         Args:
-            task_id (int): The ID of the task to retrieve.
+            task_id (int): The ID of the task to be retrieved.
 
         Returns:
-            Task: The task with the given ID.
+            Task: The retrieved task.
         """
         try:
             return self.task_manager.get_task(task_id)
