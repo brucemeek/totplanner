@@ -24,16 +24,15 @@ class DatabaseManager:
     """
     The DatabaseManager class is responsible for managing the SQL databases. It interacts with the SQLAlchemy ORM to create, update, and retrieve data from the databases.
     """
-    def __init__(self, db_name):
+    def __init__(self, engine):
         """
         Initialize a new DatabaseManager instance.
         Args:
-            db_name (str): The name of the SQLite database file.
+            engine (Engine): The SQLAlchemy engine instance.
         """
         try:
-            self.engine = create_engine('sqlite:///' + db_name)
-            Base.metadata.create_all(self.engine)
-            self.Session = scoped_session(sessionmaker(bind=self.engine))
+            Base.metadata.create_all(engine)
+            self.Session = scoped_session(sessionmaker(bind=engine))
         except Exception as e:
             raise Exception("Failed to initialize DatabaseManager: " + str(e))
 

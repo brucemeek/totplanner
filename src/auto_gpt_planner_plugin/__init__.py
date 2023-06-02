@@ -39,172 +39,180 @@ class AutoGPTPlannerPlugin(AutoGPTPluginTemplate):
         # Initialize the task manager with the engine
         self.task_manager = TaskManager(engine)
 
-        # Initialize the planner with the task manager
-        self.planner = Planner()
-
-    def start_planning_cycle(self):
-        """
-        Starts the planning cycle. This includes generating a new plan, creating tasks based on the plan,
-        and executing tasks based on their priority.
-        """
-        try:
-            self.planner.start_planning_cycle()
-        except Exception as e:
-            raise Exception("Failed to start planning cycle: " + str(e))
-
-    def generate_plan(self):
-        """
-        Generates a new plan and saves it to the database.
-        """
-        try:
-            self.planner.generate_plan()
-        except Exception as e:
-            raise Exception("Failed to generate plan: " + str(e))
-
-    def generate_tasks(self):
-        """
-        Generates tasks based on the current plan and saves them to the database.
-        """
-        try:
-            self.planner.generate_tasks()
-        except Exception as e:
-            raise Exception("Failed to generate tasks: " + str(e))
-
-    def execute_task(self, task_id):
-        """
-        Executes a task based on its ID.
-
-        Args:
-            task_id (int): The ID of the task to execute.
-        """
-        try:
-            self.task_manager.execute_task(task_id)
-        except Exception as e:
-            raise Exception("Failed to execute task: " + str(e))
-
-    def mark_task_complete(self, task_id):
-        """
-        Marks a task as complete based on its ID.
-
-        Args:
-            task_id (int): The ID of the task to mark as complete.
-        """
-        try:
-            self.task_manager.mark_task_complete(task_id)
-        except Exception as e:
-            raise Exception("Failed to mark task as complete: " + str(e))
-
-    def update_plan(self):
-        """
-        Updates the current plan based on the completed tasks.
-        """
-        try:
-            self.planner.update_plan()
-        except Exception as e:
-            raise Exception("Failed to update plan: " + str(e))
-
-    def get_plan(self):
-        """
-        Retrieves the current plan from the database.
-
-        Returns:
-            Plan: The current plan.
-        """
-        try:
-            return self.planner.get_plan()
-        except Exception as e:
-            raise Exception("Failed to get plan: " + str(e))
-
-    def get_tasks(self):
-        """
-        Retrieves all tasks from the database.
-
-        Returns:
-            List[Task]: A list of all tasks.
-        """
-        try:
-            return self.task_manager.get_tasks()
-        except Exception as e:
-            raise Exception("Failed to get tasks: " + str(e))
-
-    def get_task(self, task_id):
-        """
-        Retrieves a task based on its ID.
-
-        Args:
-            task_id (int): The ID of the task to retrieve.
-
-        Returns:
-            Task: The task with the given ID.
-        """
-        try:
-            return self.task_manager.get_task(task_id)
-        except Exception as e:
-            raise Exception("Failed to get task: " + str(e))
+        # Initialize the planner with the engine
+        self.planner = Planner(engine, self.task_manager)
 
     def can_handle_on_response(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the on_response method.
+        Returns:
+            bool: True if the plugin can handle the on_response method."""
         return True
 
     def on_response(self, response: str, *args, **kwargs) -> str:
-        pass
+        """This method is called when a response is received from the model."""
 
     def can_handle_post_prompt(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the post_prompt method.
+        Returns:
+            bool: True if the plugin can handle the post_prompt method."""
         return True
 
     def post_prompt(self, prompt: PromptGenerator) -> PromptGenerator:
-        pass
+        """This method is called just after the generate_prompt is called,
+            but actually before the prompt is generated.
+        Args:
+            prompt (PromptGenerator): The prompt generator.
+        Returns:
+            PromptGenerator: The prompt generator.
+        """
 
     def can_handle_on_planning(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the on_planning method.
+        Returns:
+            bool: True if the plugin can handle the on_planning method."""
         return True
 
-    def on_planning(self, prompt: PromptGenerator, messages: List[Message]) -> Optional[str]:
-        pass
+    def on_planning(
+            self, prompt: PromptGenerator, messages: List[str]
+    ) -> Optional[str]:
+        """This method is called before the planning chat completeion is done.
+        Args:
+            prompt (PromptGenerator): The prompt generator.
+            messages (List[str]): The list of messages.
+        """
 
     def can_handle_post_planning(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the post_planning method.
+        Returns:
+            bool: True if the plugin can handle the post_planning method."""
         return True
 
     def post_planning(self, response: str) -> str:
-        pass
+        """This method is called after the planning chat completeion is done.
+        Args:
+            response (str): The response.
+        Returns:
+            str: The resulting response.
+        """
 
     def can_handle_pre_instruction(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the pre_instruction method.
+        Returns:
+            bool: True if the plugin can handle the pre_instruction method."""
         return True
 
-    def pre_instruction(self, messages: List[Message]) -> List[Message]:
-        pass
+    def pre_instruction(self, messages: List[str]) -> List[str]:
+        """This method is called before the instruction chat is done.
+        Args:
+            messages (List[str]): The list of context messages.
+        Returns:
+            List[str]: The resulting list of messages.
+        """
 
     def can_handle_on_instruction(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the on_instruction method.
+        Returns:
+            bool: True if the plugin can handle the on_instruction method."""
         return True
 
-    def on_instruction(self, messages: List[Message]) -> Optional[str]:
-        pass
+    def on_instruction(self, messages: List[str]) -> Optional[str]:
+        """This method is called when the instruction chat is done.
+        Args:
+            messages (List[str]): The list of context messages.
+        Returns:
+            Optional[str]: The resulting message.
+        """
 
     def can_handle_post_instruction(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the post_instruction method.
+        Returns:
+            bool: True if the plugin can handle the post_instruction method."""
         return True
 
     def post_instruction(self, response: str) -> str:
-        pass
+        """This method is called after the instruction chat is done.
+        Args:
+            response (str): The response.
+        Returns:
+            str: The resulting response.
+        """
 
     def can_handle_pre_command(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the pre_command method.
+        Returns:
+            bool: True if the plugin can handle the pre_command method."""
         return True
 
-    def pre_command(self, command_name: str, arguments: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
-        pass
+    def pre_command(
+            self, command_name: str, arguments: Dict[str, Any]
+    ) -> Tuple[str, Dict[str, Any]]:
+        """This method is called before the command is executed.
+        Args:
+            command_name (str): The command name.
+            arguments (Dict[str, Any]): The arguments.
+        Returns:
+            Tuple[str, Dict[str, Any]]: The command name and the arguments.
+        """
 
     def can_handle_post_command(self) -> bool:
+        """This method is called to check that the plugin can
+        handle the post_command method.
+        Returns:
+            bool: True if the plugin can handle the post_command method."""
         return True
 
     def post_command(self, command_name: str, response: str) -> str:
-        pass
+        """This method is called after the command is executed.
+        Args:
+            command_name (str): The command name.
+            response (str): The response.
+        Returns:
+            str: The resulting response.
+        """
 
     def can_handle_chat_completion(
-        self, messages: Dict[Any, Any], model: str, temperature: float, max_tokens: int
+            self,
+            messages: list[Dict[Any, Any]],
+            model: str,
+            temperature: float,
+            max_tokens: int,
     ) -> bool:
+        """This method is called to check that the plugin can
+        handle the chat_completion method.
+        Args:
+            messages (Dict[Any, Any]): The messages.
+            model (str): The model name.
+            temperature (float): The temperature.
+            max_tokens (int): The max tokens.
+        Returns:
+            bool: True if the plugin can handle the chat_completion method."""
         return True
 
     def handle_chat_completion(
-        self, messages: List[Message], model: str, temperature: float, max_tokens: int
+            self,
+            messages: list[Dict[Any, Any]],
+            model: str,
+            temperature: float,
+            max_tokens: int,
     ) -> str:
-        pass
+        """This method is called when the chat completion is done.
+        Args:
+            messages (Dict[Any, Any]): The messages.
+            model (str): The model name.
+            temperature (float): The temperature.
+            max_tokens (int): The max tokens.
+        Returns:
+            str: The resulting response.
+        """
+        return None
 
     def can_handle_text_embedding(
         self, text: str

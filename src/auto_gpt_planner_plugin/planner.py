@@ -4,15 +4,16 @@ import os
 import openai
 
 class Planner:
-    def __init__(self, task_manager=None):
+    def __init__(self, engine, task_manager=None):
         """
         Initializes the Planner class and creates new instances of the TaskManager and DatabaseManager.
 
         Args:
+            engine: The SQLAlchemy engine.
             task_manager (TaskManager): An instance of the TaskManager class.
         """
-        self.task_manager = task_manager if task_manager is not None else TaskManager()
-        self.database_manager = DatabaseManager()
+        self.task_manager = task_manager if task_manager is not None else TaskManager(engine)
+        self.database_manager = DatabaseManager(engine)
 
 
     def run_initial_planning_cycle(self):
@@ -219,3 +220,103 @@ class Planner:
         if result is None:
             raise Exception("Failed to update goals")
         return result
+    
+    def start_planning_cycle(self):
+        """
+        Starts the planning cycle. This includes generating a new plan, creating tasks based on the plan,
+        and executing tasks based on their priority.
+        """
+        try:
+            self.planner.start_planning_cycle()
+        except Exception as e:
+            raise Exception("Failed to start planning cycle: " + str(e))
+
+    def generate_plan(self):
+        """
+        Generates a new plan and saves it to the database.
+        """
+        try:
+            self.planner.generate_plan()
+        except Exception as e:
+            raise Exception("Failed to generate plan: " + str(e))
+
+    def generate_tasks(self):
+        """
+        Generates tasks based on the current plan and saves them to the database.
+        """
+        try:
+            self.planner.generate_tasks()
+        except Exception as e:
+            raise Exception("Failed to generate tasks: " + str(e))
+
+    def execute_task(self, task_id):
+        """
+        Executes a task based on its ID.
+
+        Args:
+            task_id (int): The ID of the task to execute.
+        """
+        try:
+            self.task_manager.execute_task(task_id)
+        except Exception as e:
+            raise Exception("Failed to execute task: " + str(e))
+
+    def mark_task_complete(self, task_id):
+        """
+        Marks a task as complete based on its ID.
+
+        Args:
+            task_id (int): The ID of the task to mark as complete.
+        """
+        try:
+            self.task_manager.mark_task_complete(task_id)
+        except Exception as e:
+            raise Exception("Failed to mark task as complete: " + str(e))
+
+    def update_plan(self):
+        """
+        Updates the current plan based on the completed tasks.
+        """
+        try:
+            self.planner.update_plan()
+        except Exception as e:
+            raise Exception("Failed to update plan: " + str(e))
+
+    def get_plan(self):
+        """
+        Retrieves the current plan from the database.
+
+        Returns:
+            Plan: The current plan.
+        """
+        try:
+            return self.planner.get_plan()
+        except Exception as e:
+            raise Exception("Failed to get plan: " + str(e))
+
+    def get_tasks(self):
+        """
+        Retrieves all tasks from the database.
+
+        Returns:
+            List[Task]: A list of all tasks.
+        """
+        try:
+            return self.task_manager.get_tasks()
+        except Exception as e:
+            raise Exception("Failed to get tasks: " + str(e))
+
+    def get_task(self, task_id):
+        """
+        Retrieves a task based on its ID.
+
+        Args:
+            task_id (int): The ID of the task to retrieve.
+
+        Returns:
+            Task: The task with the given ID.
+        """
+        try:
+            return self.task_manager.get_task(task_id)
+        except Exception as e:
+            raise Exception("Failed to get task: " + str(e))
